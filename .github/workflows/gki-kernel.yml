@@ -215,8 +215,8 @@ jobs:
             echo "Adding KernelSU BakaSU..."
             curl -LSs "https://raw.githubusercontent.com/Baka-SU/BakaSU/main/kernel/setup.sh" | bash -s $BRANCH
           fi          
-          wget -O "./KernelSU/‎kernel/feature/selinux_hide.c" https://raw.githubusercontent.com/Baka-SU/BakaSU/08966cd0574d898a678a9bbe9a3ea0270e71ea6e/kernel/feature/selinux_hide.c
-          wget -O "./KernelSU/‎kernel/tools/susfs_compat.mk" https://raw.githubusercontent.com/Baka-SU/BakaSU/08966cd0574d898a678a9bbe9a3ea0270e71ea6e/kernel/tools/susfs_compat.mk
+          wget -O ./KernelSU/kernel/feature/selinux_hide.c https://raw.githubusercontent.com/Baka-SU/BakaSU/08966cd0574d898a678a9bbe9a3ea0270e71ea6e/kernel/feature/selinux_hide.c
+          wget -O ./KernelSU/kernel/tools/susfs_compat.mk https://raw.githubusercontent.com/Baka-SU/BakaSU/08966cd0574d898a678a9bbe9a3ea0270e71ea6e/kernel/tools/susfs_compat.mk
 
       - name: 添加 Baseband-guard 支持
         #if: ${{ github.event.inputs.BBG == 'true' }}
