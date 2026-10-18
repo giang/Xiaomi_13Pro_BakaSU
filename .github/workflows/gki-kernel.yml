@@ -218,9 +218,6 @@ jobs:
           wget -O ./KernelSU/kernel/feature/selinux_hide.c https://raw.githubusercontent.com/Baka-SU/BakaSU/f308ed0936bdd31163cb53da3f42bc7a698f5512/kernel/feature/selinux_hide.c
           wget -O ./KernelSU/kernel/tools/susfs_compat.mk https://raw.githubusercontent.com/Baka-SU/BakaSU/f308ed0936bdd31163cb53da3f42bc7a698f5512/kernel/tools/susfs_compat.mk
 
-          # Add NoMount
-          curl https://raw.githubusercontent.com/maxsteeel/nomount/refs/heads/dev/kernel/setup.sh | bash -
-
       - name: 添加 Baseband-guard 支持
         #if: ${{ github.event.inputs.BBG == 'true' }}
         run: |
