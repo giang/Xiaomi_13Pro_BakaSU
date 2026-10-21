@@ -215,7 +215,7 @@ jobs:
             echo "Adding KernelSU BakaSU..."
             curl -LSs "https://raw.githubusercontent.com/Baka-SU/BakaSU/main/kernel/setup.sh" | bash -s $BRANCH
           fi          
-          wget -O ./KernelSU/kernel/feature/selinux_hide.c https://raw.githubusercontent.com/Baka-SU/BakaSU/f308ed0936bdd31163cb53da3f42bc7a698f5512/kernel/feature/selinux_hide.c
+          #wget -O ./KernelSU/kernel/feature/selinux_hide.c https://raw.githubusercontent.com/Baka-SU/BakaSU/f308ed0936bdd31163cb53da3f42bc7a698f5512/kernel/feature/selinux_hide.c
           wget -O ./KernelSU/kernel/tools/susfs_compat.mk https://raw.githubusercontent.com/Baka-SU/BakaSU/f308ed0936bdd31163cb53da3f42bc7a698f5512/kernel/tools/susfs_compat.mk
 
       - name: 添加 Baseband-guard 支持
@@ -271,8 +271,8 @@ jobs:
 
           if [ "${{ inputs.kernelsu_variant }}" == "BakaSU" ]; then
             echo "Applying hooks for BakaSU..."
-            #cp ../../SukiSU_patch/hooks/scope_min_manual_hooks_v1.6.patch ./
-            #patch -p1 -F 3 < scope_min_manual_hooks_v1.6.patch
+            cp ../../SukiSU_patch/hooks/scope_min_manual_hooks_v1.6.patch ./
+            patch -p1 -F 3 < scope_min_manual_hooks_v1.6.patch
           fi
 
       - name: Apply Hide Stuff Patches
@@ -280,8 +280,8 @@ jobs:
           echo "Changing to configuration directory: $CONFIG..."
           cd "$CONFIG/common"
           # Apply additional patch (Temp DISABLED)
-          #cp ../../SukiSU_patch/69_hide_stuff.patch ./
-          #patch -p1 -F 3 < 69_hide_stuff.patch
+          cp ../../SukiSU_patch/69_hide_stuff.patch ./
+          patch -p1 -F 3 < 69_hide_stuff.patch
 
       - name: Copy and Apply LZ4KD and ZSTDN patches
         run: |
@@ -424,7 +424,6 @@ jobs:
           echo "CONFIG_BPF_STREAM_PARSER=y" >> "$CONFIG_FILE"
 
       - name: Apply local SUSFS compatibility fixes
-        if: false
         run: |
           FILE="$CONFIG/common/fs/proc/task_mmu.c"
           python3 - "$FILE" <<'PY'
