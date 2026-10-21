@@ -215,9 +215,14 @@ jobs:
           if [ "${{ inputs.kernelsu_variant }}" == "BakaSU" ]; then
             echo "Adding KernelSU BakaSU..."
             curl -LSs "https://raw.githubusercontent.com/Baka-SU/BakaSU/main/kernel/setup.sh" | bash -s $BRANCH
-          fi          
-          #wget -O ./KernelSU/kernel/feature/selinux_hide.c https://raw.githubusercontent.com/Baka-SU/BakaSU/f308ed0936bdd31163cb53da3f42bc7a698f5512/kernel/feature/selinux_hide.c
+          fi
+
+          wget -O ./KernelSU/kernel/feature/selinux_hide.c https://raw.githubusercontent.com/Baka-SU/BakaSU/f308ed0936bdd31163cb53da3f42bc7a698f5512/kernel/feature/selinux_hide.c
           wget -O ./KernelSU/kernel/tools/susfs_compat.mk https://raw.githubusercontent.com/Baka-SU/BakaSU/f308ed0936bdd31163cb53da3f42bc7a698f5512/kernel/tools/susfs_compat.mk
+          
+          curl -sSL -O https://raw.githubusercontent.com/adennnqt/anykern-DumpC2J/refs/heads/main/scripts/ksu_susfs_fixup.sh
+          chmod +x ksu_susfs_fixup.sh
+          ./ksu_susfs_fixup.sh "$(pwd)/KernelSU/kernel" "BakaSU"
 
       - name: 添加 Baseband-guard 支持
         #if: ${{ github.event.inputs.BBG == 'true' }}
