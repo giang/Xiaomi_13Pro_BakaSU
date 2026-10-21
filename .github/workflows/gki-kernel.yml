@@ -28,6 +28,9 @@ on:
       kernelsu_branch:
         required: true
         type: string
+      ksu_manager_branch:
+        required: true
+        type: string
       kernelsu_branch_other:
         required: false
         type: string
@@ -132,7 +135,7 @@ jobs:
           echo "Cloning AnyKernel3 and other dependencies..."
 
           ANYKERNEL_BRANCH="gki-2.0"
-          SUSFS_BRANCH="gki-${{ inputs.android_version }}-${{ inputs.kernel_version }}"
+          SUSFS_BRANCH="gki-${{ inputs.android_version }}-${{ inputs.kernel_version }}-dev"
 
           # Debug print the branches
           echo "Using branch for SUSFS: $SUSFS_BRANCH"
