@@ -22,9 +22,10 @@ on:
       kernelsu_branch_other:
         required: false
         type: string
-  
+
 jobs:
-  build-kernel-a13-5-15-kernelsu-susfs:
+  build-kernel-a13-5-15-SukiSU-susfs:
+    if: inputs.kernelsu_variant == 'SukiSU'
     strategy:
       fail-fast: false
       matrix:
@@ -52,6 +53,27 @@ jobs:
           #- sub_level: "180"
           #  os_patch_level: "8gen2"
     uses: ./.github/workflows/gki-kernel.yml
+    secrets: inherit
+    with:
+      make_release: ${{ inputs.make_release }}
+      android_version: "android13"
+      kernel_version: "5.15"
+      sub_level: ${{ matrix.sub_level }}
+      os_patch_level: ${{ matrix.os_patch_level }}
+      kernelsu_variant: ${{ inputs.kernelsu_variant }}
+      kernelsu_branch: ${{ inputs.kernelsu_branch }}
+      ksu_manager_branch: ${{ inputs.ksu_manager_branch }}
+      kernelsu_branch_other: ${{ inputs.kernelsu_branch_other }}
+
+  build-kernel-a13-5-15-BakaSU-susfs:
+    if: inputs.kernelsu_variant == 'BakaSU'
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - sub_level: "180"
+            os_patch_level: "2025-05"
+    uses: ./.github/workflows/gki-kernel-baka.yml
     secrets: inherit
     with:
       make_release: ${{ inputs.make_release }}
