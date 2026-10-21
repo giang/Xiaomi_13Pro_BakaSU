@@ -23,6 +23,7 @@ on:
         type: choice
         options:
           - BakaSU
+          - SukiSU
         default: BakaSU
       ksu_manager_branch:
         description: "Input the branch of BakaSU Manager app"
