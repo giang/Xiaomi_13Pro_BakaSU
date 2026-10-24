@@ -228,6 +228,7 @@ jobs:
           patch -p1 < 50_add_susfs_in_gki-${{ inputs.android_version }}-${{ inputs.kernel_version }}.patch || true
 
       - name: Apply New Hooks Patches
+        if: false
         run: |
           cd "$CONFIG/common"
           if [ "${{ inputs.kernelsu_variant }}" == "BakaSU" ]; then
@@ -236,6 +237,7 @@ jobs:
           fi
 
       - name: Apply Hide Stuff Patches
+        if: false
         run: |
           cd "$CONFIG/common"
           cp ../../SukiSU_patch/69_hide_stuff.patch ./
@@ -352,6 +354,7 @@ jobs:
           echo "CONFIG_BPF_STREAM_PARSER=y" >> "$CONFIG_FILE"
 
       - name: Apply local SUSFS compatibility fixes
+        if: false
         run: |
           FILE="$CONFIG/common/fs/proc/task_mmu.c"
           python3 - "$FILE" <<'PY'
