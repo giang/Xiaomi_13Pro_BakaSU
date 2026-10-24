@@ -486,6 +486,10 @@ jobs:
             set -e
             set -x
             cd "$CONFIG"
+
+            # --- THÊM DÒNG NÀY VÀO ĐÂY ---
+            make -C common mrproper
+            # -----------------------------
             
             # 替换 BUILD_SYSTEM_DLKM=1 为 BUILD_SYSTEM_DLKM=0
             sed -i 's/BUILD_SYSTEM_DLKM=1/BUILD_SYSTEM_DLKM=0/' common/build.config.gki.aarch64
