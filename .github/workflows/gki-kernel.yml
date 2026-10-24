@@ -215,6 +215,10 @@ jobs:
           echo "Adding KernelSU SukiSU..."
           curl -LSs "https://raw.githubusercontent.com/SukiSU-Ultra/SukiSU-Ultra/main/kernel/setup.sh" | bash $BRANCH     
 
+          curl -Lo ksu_susfs_fixup.sh https://raw.githubusercontent.com/adennnqt/anykern-DumpC2J/main/scripts/ksu_susfs_fixup.sh
+          chmod +x ksu_susfs_fixup.sh
+          bash ksu_susfs_fixup.sh $CONFIG/KernelSU sukisu
+
       - name: 添加 Baseband-guard 支持
         #if: ${{ github.event.inputs.BBG == 'true' }}
         run: |
@@ -420,31 +424,17 @@ jobs:
           python3 - "$FILE" <<'PY'
           from pathlib import Path
           import sys
-          
+
           path = Path(sys.argv[1])
-          if not path.exists():
-              raise SystemExit(f"File not found: {path}")
-          
           text = path.read_text()
-          
-          # 1. Fix uninitialized variable (nếu có)
+
           old = "struct dentry *dentry;"
           new = "struct dentry *dentry = NULL;"
-          if old in text:
-              text = text.replace(old, new, 1)
-          
-          # 2. Thêm header susfs.h vào đầu file (nếu chưa có)
-          header_code = "#ifdef CONFIG_KSU_SUSFS\n#include <linux/susfs.h>\n#endif\n"
-          if "linux/susfs.h" not in text:
-              text = header_code + text
-          
-          path.write_text(text)
-          print(f"Successfully patched {path}")
+
+          if old not in text:
+              raise SystemExit(f"Expected declaration not found in {path}")
+          path.write_text(text.replace(old, new, 1))
           PY
-          
-          curl -Lo ksu_susfs_fixup.sh https://raw.githubusercontent.com/adennnqt/anykern-DumpC2J/main/scripts/ksu_susfs_fixup.sh
-          chmod +x ksu_susfs_fixup.sh
-          #bash ksu_susfs_fixup.sh $CONFIG/common/drivers/kernelsu sukisu
           
       - name: Apply SUSFS sucompat shim
         env:
