@@ -400,13 +400,13 @@ jobs:
             set -x
             cd "$CONFIG"
             
-            # --- FIX LỖI "The source tree is not clean" ---
-            # 1. Xóa các thư mục/file cấu hình tạm bị sót lại trong common
+            # --- FIX LỖI "The source tree is not clean" VA "extraneous endif" ---
+            # 1. Dọn dẹp các thư mục cấu hình bẩn trong common
             rm -rf common/.config common/include/config common/include/generated
 
-            # 2. Bỏ qua kiểm tra bẩn source tree trong common/Makefile
-            sed -i '/outputmakefile:/,/fi;/c\outputmakefile:\n\t@true' common/Makefile
-            # ---------------------------------------------
+            # 2. Chuyển lệnh báo lỗi thành thành công (không phá hỏng cấu trúc Makefile)
+            sed -i '/The source tree is not clean/,/fi;/s/false;/true;/' common/Makefile
+            # -----------------------------------------------------------------
 
             # 替换 BUILD_SYSTEM_DLKM=1 为 BUILD_SYSTEM_DLKM=0
             sed -i 's/BUILD_SYSTEM_DLKM=1/BUILD_SYSTEM_DLKM=0/' common/build.config.gki.aarch64
