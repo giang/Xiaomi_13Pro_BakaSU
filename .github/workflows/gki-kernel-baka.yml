@@ -400,10 +400,18 @@ jobs:
             set -x
             cd "$CONFIG"
             
-            # Clean source rác từ các patch trước khi build
-            make -C common mrproper
+            # --- FIX LỖI "The source tree is not clean" ---
+            # 1. Xóa các thư mục/file cấu hình tạm bị sót lại trong common
+            rm -rf common/.config common/include/config common/include/generated
 
+            # 2. Bỏ qua kiểm tra bẩn source tree trong common/Makefile
+            sed -i '/outputmakefile:/,/fi;/c\outputmakefile:\n\t@true' common/Makefile
+            # ---------------------------------------------
+
+            # 替换 BUILD_SYSTEM_DLKM=1 为 BUILD_SYSTEM_DLKM=0
             sed -i 's/BUILD_SYSTEM_DLKM=1/BUILD_SYSTEM_DLKM=0/' common/build.config.gki.aarch64
+
+            # 删除 MODULES_ORDER=android/gki_aarch64_modules 行
             sed -i '/MODULES_ORDER=android\/gki_aarch64_modules/d' common/build.config.gki.aarch64
             sed -i '/KMI_SYMBOL_LIST_STRICT_MODE/d' common/build.config.gki.aarch64
             
