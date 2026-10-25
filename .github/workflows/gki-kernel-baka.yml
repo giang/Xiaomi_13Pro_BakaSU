@@ -216,10 +216,6 @@ jobs:
             echo "Adding KernelSU BakaSU..."
             curl -LSs "https://raw.githubusercontent.com/Baka-SU/BakaSU/main/kernel/setup.sh" | bash -s $BRANCH
           fi
-          
-          curl -sSL -O https://raw.githubusercontent.com/adennnqt/anykern-DumpC2J/refs/heads/main/scripts/ksu_susfs_fixup.sh
-          chmod +x ksu_susfs_fixup.sh
-          bash ksu_susfs_fixup.sh $(pwd)/KernelSU/kernel bakasu
 
       - name: 添加 Baseband-guard 支持
         #if: ${{ github.event.inputs.BBG == 'true' }}
@@ -268,7 +264,6 @@ jobs:
           patch -p1 < 50_add_susfs_in_gki-${{ inputs.android_version }}-${{ inputs.kernel_version }}.patch || true
 
       - name: Apply New Hooks Patches
-        if: false
         run: |
           echo "Changing to configuration directory: $CONFIG..."
           cd "$CONFIG/common"
@@ -280,7 +275,6 @@ jobs:
           fi
 
       - name: Apply Hide Stuff Patches
-        if: false
         run: |
           echo "Changing to configuration directory: $CONFIG..."
           cd "$CONFIG/common"
@@ -429,7 +423,6 @@ jobs:
           echo "CONFIG_BPF_STREAM_PARSER=y" >> "$CONFIG_FILE"
 
       - name: Apply local SUSFS compatibility fixes
-        if: false
         run: |
           FILE="$CONFIG/common/fs/proc/task_mmu.c"
           python3 - "$FILE" <<'PY'
@@ -447,6 +440,10 @@ jobs:
 
           path.write_text(text.replace(old, new, 1))
           PY
+
+          curl -sSL -O https://raw.githubusercontent.com/adennnqt/anykern-DumpC2J/refs/heads/main/scripts/ksu_susfs_fixup.sh
+          chmod +x ksu_susfs_fixup.sh
+          bash ksu_susfs_fixup.sh $(pwd)/KernelSU/kernel bakasu
 
       - name: Config Kernel Name
         run: |
