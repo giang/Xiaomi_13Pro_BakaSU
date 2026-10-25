@@ -270,15 +270,15 @@ jobs:
 
           if [ "${{ inputs.kernelsu_variant }}" == "BakaSU" ]; then
             echo "Applying hooks for BakaSU..."
-            cp ../../SukiSU_patch/hooks/scope_min_manual_hooks_v1.6.patch ./
-            patch -p1 -F 3 < scope_min_manual_hooks_v1.6.patch
+            #cp ../../SukiSU_patch/hooks/scope_min_manual_hooks_v1.6.patch ./
+            #patch -p1 -F 3 < scope_min_manual_hooks_v1.6.patch
           fi
 
       - name: Apply Hide Stuff Patches
         run: |
           echo "Changing to configuration directory: $CONFIG..."
           cd "$CONFIG/common"
-          # Apply additional patch (Temp DISABLED)
+          # Apply additional patch
           cp ../../SukiSU_patch/69_hide_stuff.patch ./
           patch -p1 -F 3 < 69_hide_stuff.patch
 
@@ -422,25 +422,8 @@ jobs:
           echo "CONFIG_IP6_NF_MATCH_HL=y" >> "$CONFIG_FILE"
           echo "CONFIG_BPF_STREAM_PARSER=y" >> "$CONFIG_FILE"
 
-      - name: Apply local SUSFS compatibility fixes
+      - name: Apply KSU SUSFS Fixup
         run: |
-          FILE="$CONFIG/common/fs/proc/task_mmu.c"
-          python3 - "$FILE" <<'PY'
-          from pathlib import Path
-          import sys
-
-          path = Path(sys.argv[1])
-          text = path.read_text()
-
-          old = "struct dentry *dentry;"
-          new = "struct dentry *dentry = NULL;"
-
-          if old not in text:
-              raise SystemExit(f"Expected declaration not found in {path}")
-
-          path.write_text(text.replace(old, new, 1))
-          PY
-
           curl -sSL -O https://raw.githubusercontent.com/adennnqt/anykern-DumpC2J/refs/heads/main/scripts/ksu_susfs_fixup.sh
           chmod +x ksu_susfs_fixup.sh
           bash ksu_susfs_fixup.sh $CONFIG/KernelSU/kernel bakasu
@@ -486,25 +469,16 @@ jobs:
             set -e
             set -x
             cd "$CONFIG"
-            
-            # --- FIX LỖI "The source tree is not clean" VA "extraneous endif" ---
-            # 1. Dọn dẹp các thư mục cấu hình bẩn trong common
-            rm -rf common/.config common/include/config common/include/generated
-
-            # 2. Chuyển lệnh báo lỗi thành thành công (không phá hỏng cấu trúc Makefile)
-            sed -i '/The source tree is not clean/,/fi;/s/false;/true;/' common/Makefile
-            # -----------------------------------------------------------------
-
             # 替换 BUILD_SYSTEM_DLKM=1 为 BUILD_SYSTEM_DLKM=0
             sed -i 's/BUILD_SYSTEM_DLKM=1/BUILD_SYSTEM_DLKM=0/' common/build.config.gki.aarch64
 
             # 删除 MODULES_ORDER=android/gki_aarch64_modules 行
             sed -i '/MODULES_ORDER=android\/gki_aarch64_modules/d' common/build.config.gki.aarch64
+
             sed -i '/KMI_SYMBOL_LIST_STRICT_MODE/d' common/build.config.gki.aarch64
-            
             echo "Building the kernel..."
             if [ -f "build/build.sh" ]; then
-              LTO=thin SYSTEM_DLKM_RE_SIGN=0 BUILD_SYSTEM_DLKM=0 KMI_SYMBOL_LIST_STRICT_MODE=0 BUILD_CONFIG=common/build.config.gki.aarch64 build/build.sh CC="/usr/bin/ccache clang" || exit 1
+              LTO=thin BUILD_CONFIG=common/build.config.gki.aarch64 build/build.sh CC="/usr/bin/ccache clang" || exit 1
             else
               tools/bazel build --disk_cache=/home/runner/.cache/bazel --config=fast --lto=thin //common:kernel_aarch64_dist || exit 1
             fi
