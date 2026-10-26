@@ -290,7 +290,7 @@ jobs:
 
           echo "Baseband-guard 配置完成"
 
-      - name: Download SUSFS Fix scripts folder from LingLuo17/AnyKernel3
+      - name: Download SUSFS Fix scripts to temp folder
         uses: actions/checkout@v4
         with:
           repository: 'LingLuo17/AnyKernel3'
@@ -298,27 +298,40 @@ jobs:
           sparse-checkout: |
             scripts
           sparse-checkout-cone-mode: false
-          path: ${{ env.CONFIG }}
-      
-      - name: Grant +x permission to all .sh files
-        run: |
-          find "${{ env.CONFIG }}" -type f -name "*.sh" -exec chmod +x {} +
+          path: 'temp_anykernel'
 
-      - name: 同步 SukiSU 内核 UAPI 版本（对齐官方管理器）
-        if: inputs.kernelsu_variant == 'SukiSU'
-        working-directory: ${{ env.KERNEL_ROOT }}
-        run: bash "$GITHUB_WORKSPACE/scripts/ksu_uapi_sync/sync_uapi.sh" KernelSU
-        
-      - name: SUSFS FIX for BakaSU
-        working-directory: ${{ env.KERNEL_ROOT }}
-        env:
-          ANDROID_VERSION: ${{ inputs.android_version }}
-          KERNEL_VERSION: ${{ inputs.kernel_version }}
-          KSU_VARIANT: ${{ inputs.kernelsu_variant }}
-          OS_PATCH_LEVEL: ${{ inputs.os_patch_level }}
-          SUB_LEVEL: ${{ inputs.sub_level }}
-          SUSFS4KSU: ${{ github.workspace }}/susfs4ksu
-        run: bash "$GITHUB_WORKSPACE/scripts/susfs_fixes/apply.sh"
+      - name: Copy scripts to CONFIG directory and grant +x permission
+        run: |
+          # Copy thư mục scripts vào thư mục CONFIG
+          cp -r temp_anykernel/scripts "${{ env.CONFIG }}/"
+          
+          # Dọn dẹp thư mục tạm
+          rm -rf temp_anykernel
+          
+          # Cấp quyền thực thi cho các file .sh
+          find "${{ env.CONFIG }}/scripts" -type f -name "*.sh" -exec chmod +x {} +
+
+      - name: Download scripts from LingLuo17/AnyKernel3
+        uses: actions/checkout@v4
+        with:
+          repository: 'LingLuo17/AnyKernel3'
+          ref: 'main'
+          sparse-checkout: |
+            scripts
+          sparse-checkout-cone-mode: false
+          path: 'temp_anykernel'
+
+      - name: Setup scripts in workspace root and grant +x permission
+        run: |
+          # Tạo thư mục scripts ở gốc Workspace và chép nội dung vào
+          mkdir -p "$GITHUB_WORKSPACE/scripts"
+          cp -r temp_anykernel/scripts/* "$GITHUB_WORKSPACE/scripts/"
+          
+          # Xóa thư mục tạm
+          rm -rf temp_anykernel
+          
+          # Cấp quyền thực thi cho toàn bộ file .sh trong $GITHUB_WORKSPACE/scripts
+          find "$GITHUB_WORKSPACE/scripts" -type f -name "*.sh" -exec chmod +x {} +
 
       - name: Apply SUSFS Patches for KernelSU Variants
         if: false
