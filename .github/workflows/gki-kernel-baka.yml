@@ -439,12 +439,6 @@ jobs:
           echo "CONFIG_IP6_NF_MATCH_HL=y" >> "$CONFIG_FILE"
           echo "CONFIG_BPF_STREAM_PARSER=y" >> "$CONFIG_FILE"
 
-      - name: Apply KSU SUSFS Fixup
-        run: |
-          curl -sSL -O https://raw.githubusercontent.com/adennnqt/anykern-DumpC2J/refs/heads/main/scripts/ksu_susfs_fixup.sh
-          chmod +x ksu_susfs_fixup.sh
-          bash ksu_susfs_fixup.sh $CONFIG/KernelSU/kernel bakasu
-
       - name: Config Kernel Name
         run: |
           echo "Changing to configuration directory: $CONFIG..."
