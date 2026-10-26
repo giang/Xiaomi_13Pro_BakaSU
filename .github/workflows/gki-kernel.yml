@@ -162,8 +162,55 @@ jobs:
           echo "CONFIG set to: $CONFIG"
           KERNEL_ROOT="${{ github.workspace }}/${{ env.CONFIG }}"
           echo "KERNEL_ROOT=$KERNEL_ROOT" >> $GITHUB_ENV
-          
+
       - name: Initialize and Sync Kernel Source
+        run: |
+          echo "Creating folder for configuration: $CONFIG..."
+          mkdir -p "$CONFIG"
+          cd "$CONFIG"
+
+          # Initialize and sync kernel source từ Xiaomi
+          echo "Initializing and syncing kernel source..."
+          FORMATTED_BRANCH="${{ inputs.android_version }}-${{ inputs.kernel_version }}-${{ inputs.os_patch_level }}"
+          $REPO init --depth=1 -u "https://giang:${{ secrets.GITHUB_TOKEN }}@github.com/giang/Xiaomi_13Pro_BakaSU.git" -b "common-${FORMATTED_BRANCH}" --repo-rev=v2.16
+          REMOTE_BRANCH=$(git ls-remote "https://giang:${{ secrets.GITHUB_TOKEN }}@github.com/giang/common.git" "${FORMATTED_BRANCH}")
+          DEFAULT_MANIFEST_PATH=.repo/manifests/default.xml
+
+          # Check if branch is deprecated
+          if grep -q deprecated <<< $REMOTE_BRANCH; then
+            echo "Found deprecated branch: $FORMATTED_BRANCH"
+            sed -i "s/\"${FORMATTED_BRANCH}\"/\"deprecated\/${FORMATTED_BRANCH}\"/g" $DEFAULT_MANIFEST_PATH
+          fi
+
+          # Sync repo
+          $REPO --version
+          $REPO --trace sync -c -j$(nproc --all) --no-tags --fail-fast
+
+          # --- TÍCH HỢP GOOGLE COMMON (android13-5.15-lts) ---
+          echo "Fetching latest Google ACK branch: android13-5.15-lts..."
+          cd common
+          git remote add google https://android.googlesource.com/kernel/common || git remote set-url google https://android.googlesource.com/kernel/common
+          git fetch google android13-5.15-lts --depth=1
+          
+          # Đè mã nguồn common của Xiaomi bằng bản android13-5.15-lts từ Google
+          git reset --hard FETCH_HEAD
+          cd ..
+          # ----------------------------------------------------
+
+          # Apply patch sửa lỗi nếu dùng phiên bản cũ
+          FORMATTED_BRANCH="${{ inputs.android_version }}-${{ inputs.kernel_version }}"
+          if grep -q deprecated <<< "$REMOTE_BRANCH" && \
+             { [ "$FORMATTED_BRANCH" == "android13-5.15" ] && \
+               [ ${{ inputs.sub_level }} -lt 123 ]; }; then
+            echo 'Fix 5.15 only support older C lib BUG'
+            cd ./common
+            curl -LSs https://github.com/zzh20188/GKI_KernelSU_SUSFS/raw/refs/heads/legacy/fix_5.15.legacy -o fix_5.15.legacy.patch
+            patch -p1 < fix_5.15.legacy.patch
+            cd ..
+          fi
+
+      - name: Initialize and Sync Kernel Source (OLD)
+        if: false
         run: |
           echo "Creating folder for configuration: $CONFIG..."
           mkdir -p "$CONFIG"
