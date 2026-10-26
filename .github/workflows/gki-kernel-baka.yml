@@ -249,6 +249,7 @@ jobs:
           OS_PATCH_LEVEL: ${{ inputs.os_patch_level }}
           SUB_LEVEL: ${{ inputs.sub_level }}
           SUSFS4KSU: ${{ github.workspace }}/susfs4ksu
+          KERNEL_ROOT: ${{ github.workspace }}/${{ env.CONFIG }}
         run: bash "$GITHUB_WORKSPACE/scripts/susfs_fixes/apply.sh"
 
       - name: Apply SUSFS Patches for KernelSU Variants
