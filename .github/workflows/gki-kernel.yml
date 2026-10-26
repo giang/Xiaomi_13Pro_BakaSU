@@ -592,7 +592,7 @@ jobs:
           gzip -n -k -f -9 ./Image > ./Image.gz
 
       - name: Download Latest BakaSU APK from CI
-        if: inputs.kernelsu_variant == 'SukiSU'
+        if: inputs.kernelsu_variant == 'BakaSU'
         continue-on-error: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
