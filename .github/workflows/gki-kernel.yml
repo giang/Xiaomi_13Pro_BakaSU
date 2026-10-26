@@ -40,7 +40,7 @@ on:
 
 jobs:
   build-kernel-kernelsu-susfs:
-    name: build-kernel--${{ inputs.kernelsu_variant }}-susfs
+    name: build-kernel-${{ inputs.kernelsu_variant }}-susfs
     runs-on: ubuntu-latest
     env:
       CCACHE_COMPILERCHECK: "%compiler% -dumpmachine; %compiler% -dumpversion"
