@@ -216,6 +216,10 @@ jobs:
             echo "Adding KernelSU BakaSU..."
             curl -LSs "https://raw.githubusercontent.com/Baka-SU/BakaSU/main/kernel/setup.sh" | bash -s $BRANCH
           fi
+          mkdir -p scripts/susfs_fixes
+          curl -sSL https://raw.githubusercontent.com/LingLuo17/AnyKernel3/main/scripts/susfs_fixes/apply.sh -o scripts/susfs_fixes/apply.sh
+          chmod +x scripts/susfs_fixes/apply.sh
+          curl -sSL https://raw.githubusercontent.com/LingLuo17/AnyKernel3/main/scripts/susfs_fixes/normalize_trace_ctx.py -o scripts/susfs_fixes/normalize_trace_ctx.py
 
       - name: 添加 Baseband-guard 支持
         #if: ${{ github.event.inputs.BBG == 'true' }}
@@ -236,7 +240,19 @@ jobs:
 
           echo "Baseband-guard 配置完成"
 
+      - name: SUSFS FIX
+        working-directory: $GITHUB_WORKSPACE/$CONFIG
+        env:
+          ANDROID_VERSION: ${{ inputs.android_version }}
+          KERNEL_VERSION: ${{ inputs.kernel_version }}
+          KSU_VARIANT: ${{ inputs.kernelsu_variant }}
+          OS_PATCH_LEVEL: ${{ inputs.os_patch_level }}
+          SUB_LEVEL: ${{ inputs.sub_level }}
+          SUSFS4KSU: $GITHUB_WORKSPACE/susfs4ksu
+        run: bash "$GITHUB_WORKSPACE/scripts/susfs_fixes/apply.sh"
+
       - name: Apply SUSFS Patches for KernelSU Variants
+        if: false
         run: |
           echo "Changing to configuration directory: $CONFIG..."
           cd "$CONFIG"
