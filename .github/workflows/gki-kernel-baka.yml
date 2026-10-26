@@ -241,14 +241,14 @@ jobs:
           echo "Baseband-guard 配置完成"
 
       - name: SUSFS FIX
-        working-directory: $GITHUB_WORKSPACE/$CONFIG
+        working-directory: ${{ github.workspace }}/${{ env.CONFIG }}
         env:
           ANDROID_VERSION: ${{ inputs.android_version }}
           KERNEL_VERSION: ${{ inputs.kernel_version }}
           KSU_VARIANT: ${{ inputs.kernelsu_variant }}
           OS_PATCH_LEVEL: ${{ inputs.os_patch_level }}
           SUB_LEVEL: ${{ inputs.sub_level }}
-          SUSFS4KSU: $GITHUB_WORKSPACE/susfs4ksu
+          SUSFS4KSU: ${{ github.workspace }}/susfs4ksu
         run: bash "$GITHUB_WORKSPACE/scripts/susfs_fixes/apply.sh"
 
       - name: Apply SUSFS Patches for KernelSU Variants
