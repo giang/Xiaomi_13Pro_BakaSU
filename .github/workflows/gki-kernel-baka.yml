@@ -216,10 +216,10 @@ jobs:
             echo "Adding KernelSU BakaSU..."
             curl -LSs "https://raw.githubusercontent.com/Baka-SU/BakaSU/main/kernel/setup.sh" | bash -s $BRANCH
           fi
-          mkdir -p scripts/susfs_fixes
-          curl -sSL https://raw.githubusercontent.com/LingLuo17/AnyKernel3/main/scripts/susfs_fixes/apply.sh -o scripts/susfs_fixes/apply.sh
-          chmod +x scripts/susfs_fixes/apply.sh
-          curl -sSL https://raw.githubusercontent.com/LingLuo17/AnyKernel3/main/scripts/susfs_fixes/normalize_trace_ctx.py -o scripts/susfs_fixes/normalize_trace_ctx.py
+          mkdir -p ../scripts/susfs_fixes
+          curl -sSL https://raw.githubusercontent.com/LingLuo17/AnyKernel3/main/scripts/susfs_fixes/apply.sh -o ../scripts/susfs_fixes/apply.sh
+          chmod +x ../scripts/susfs_fixes/apply.sh
+          curl -sSL https://raw.githubusercontent.com/LingLuo17/AnyKernel3/main/scripts/susfs_fixes/normalize_trace_ctx.py -o ../scripts/susfs_fixes/normalize_trace_ctx.py
 
       - name: 添加 Baseband-guard 支持
         #if: ${{ github.event.inputs.BBG == 'true' }}
