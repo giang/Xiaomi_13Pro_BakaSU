@@ -25,7 +25,7 @@ on:
 
 jobs:
   build-kernel-a13-5-15:
-    name: build-kernel-a13-5-15-${{ inputs.kernelsu_variant }}-SUSFS
+    name: build-kernel-${{ inputs.android_version }}-${{ inputs.kernel_version }}-${{ inputs.kernelsu_variant }}-SUSFS
     strategy:
       fail-fast: false
       matrix:
