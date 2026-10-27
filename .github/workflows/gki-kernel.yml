@@ -40,7 +40,7 @@ on:
 
 jobs:
   build-kernel-kernelsu-susfs:
-    name: build-kernel-${{ inputs.android_version }}-${{ inputs.kernel_version }}-${{ inputs.kernelsu_variant }}
+    name: build-kernel-${{ inputs.android_version }}-${{ inputs.kernel_version }}-${{ inputs.os_patch_level }}-${{ inputs.kernelsu_variant }}-SUSFS
     runs-on: ubuntu-latest
     env:
       CCACHE_COMPILERCHECK: "%compiler% -dumpmachine; %compiler% -dumpversion"
