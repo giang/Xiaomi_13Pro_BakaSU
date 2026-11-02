@@ -292,7 +292,7 @@ jobs:
         run: bash "$GITHUB_WORKSPACE/scripts/susfs_fixes/apply.sh"
 
       - name: Apply SUSFS Patches for KernelSU Variants
-        #if: false
+        if: false
         run: |
           echo "Changing to configuration directory: $CONFIG..."
           cd "$CONFIG"
