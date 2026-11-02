@@ -280,7 +280,7 @@ jobs:
         run: bash "$GITHUB_WORKSPACE/scripts/ksu_uapi_sync/sync_uapi.sh" KernelSU
         
       - name: SUSFS FIX for ${{ inputs.kernelsu_variant }}
-        if: false
+        # if: false
         working-directory: ${{ env.KERNEL_ROOT }}
         env:
           ANDROID_VERSION: ${{ inputs.android_version }}
@@ -292,7 +292,7 @@ jobs:
         run: bash "$GITHUB_WORKSPACE/scripts/susfs_fixes/apply.sh"
 
       - name: Apply SUSFS Patches for KernelSU Variants
-        # if: false
+        if: false
         run: |
           echo "Changing to configuration directory: $CONFIG..."
           cd "$CONFIG"
