@@ -280,7 +280,7 @@ jobs:
         run: bash "$GITHUB_WORKSPACE/scripts/ksu_uapi_sync/sync_uapi.sh" KernelSU
         
       - name: SUSFS FIX for ${{ inputs.kernelsu_variant }}
-        #if: false
+        if: false
         working-directory: ${{ env.KERNEL_ROOT }}
         env:
           ANDROID_VERSION: ${{ inputs.android_version }}
@@ -292,7 +292,7 @@ jobs:
         run: bash "$GITHUB_WORKSPACE/scripts/susfs_fixes/apply.sh"
 
       - name: Apply SUSFS Patches for KernelSU Variants
-        if: false
+        # if: false
         run: |
           echo "Changing to configuration directory: $CONFIG..."
           cd "$CONFIG"
@@ -519,17 +519,17 @@ jobs:
           path.write_text(text.replace(old, new, 1))
 
           # --- Fix susfs.c (Patch unused functions) ---
-          susfs_path = Path(sys.argv[2])
-          if susfs_path.exists():
-              susfs_text = susfs_path.read_text()
-              targets = [
-                  "static struct cred *susfs_switch_to_ksu_domain",
-                  "static void susfs_restore_creds"
-              ]
-              for target in targets:
-                  if target in susfs_text and f"__maybe_unused {target}" not in susfs_text:
-                      susfs_text = susfs_text.replace(target, f"__maybe_unused {target}")
-              susfs_path.write_text(susfs_text)
+          # susfs_path = Path(sys.argv[2])
+          # if susfs_path.exists():
+          #     susfs_text = susfs_path.read_text()
+          #     targets = [
+          #         "static struct cred *susfs_switch_to_ksu_domain",
+          #         "static void susfs_restore_creds"
+          #     ]
+          #     for target in targets:
+          #         if target in susfs_text and f"__maybe_unused {target}" not in susfs_text:
+          #             susfs_text = susfs_text.replace(target, f"__maybe_unused {target}")
+          #     susfs_path.write_text(susfs_text)
           PY
 
       - name: Build with retry
