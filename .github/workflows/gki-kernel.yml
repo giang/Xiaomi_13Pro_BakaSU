@@ -600,17 +600,17 @@ jobs:
           path.write_text(text.replace(old, new, 1))
 
           # --- Fix susfs.c (Patch unused functions) ---
-          # susfs_path = Path(sys.argv[2])
-          # if susfs_path.exists():
-          #     susfs_text = susfs_path.read_text()
-          #     targets = [
-          #         "static struct cred *susfs_switch_to_ksu_domain",
-          #         "static void susfs_restore_creds"
-          #     ]
-          #     for target in targets:
-          #         if target in susfs_text and f"__maybe_unused {target}" not in susfs_text:
-          #             susfs_text = susfs_text.replace(target, f"__maybe_unused {target}")
-          #     susfs_path.write_text(susfs_text)
+          susfs_path = Path(sys.argv[2])
+          if susfs_path.exists():
+              susfs_text = susfs_path.read_text()
+              targets = [
+                  "static struct cred *susfs_switch_to_ksu_domain",
+                  "static void susfs_restore_creds"
+              ]
+              for target in targets:
+                  if target in susfs_text and f"__maybe_unused {target}" not in susfs_text:
+                      susfs_text = susfs_text.replace(target, f"__maybe_unused {target}")
+              susfs_path.write_text(susfs_text)
           PY
 
       - name: Build with retry
